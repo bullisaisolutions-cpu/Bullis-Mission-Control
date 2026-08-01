@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#184d3b">
+  <meta name="description" content="Bullis Mission Control v1.3 — personal mission dashboard and offline PWA.">
+  <title>Bullis Mission Control v1.3</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">BULLIS AI SOLUTIONS</p>
+      <h1>Bullis Mission Control</h1>
+      <p class="version">Release 1.3</p>
+    </div>
+    <button id="installBtn" class="button secondary hidden">Install App</button>
+  </header>
+
+  <nav class="tabs" aria-label="Main navigation">
+    <button class="tab active" data-view="dashboard">Dashboard</button>
+    <button class="tab" data-view="missions">Missions</button>
+    <button class="tab" data-view="notes">Notes</button>
+    <button class="tab" data-view="settings">Backup</button>
+  </nav>
+
+  <main>
+    <section id="dashboard" class="view active">
+      <article class="hero-card">
+        <p class="eyebrow">MISSION ADVISOR</p>
+        <h2>Rachel</h2>
+        <p id="advisorMessage">One mission at a time. Progress beats perfection.</p>
+        <div class="hero-actions">
+          <button id="startNextBtn" class="button">Start Next Mission</button>
+          <button id="resetDayBtn" class="button secondary">Reset Day</button>
+        </div>
+      </article>
+
+      <div class="stats-grid">
+        <article class="stat-card"><span id="completeCount">0</span><small>Complete</small></article>
+        <article class="stat-card"><span id="remainingCount">0</span><small>Remaining</small></article>
+        <article class="stat-card"><span id="progressPercent">0%</span><small>Progress</small></article>
+      </div>
+
+      <article class="panel">
+        <div class="panel-heading">
+          <h2>Today’s Progress</h2>
+          <span id="progressText">0 of 0</span>
+        </div>
+        <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+      </article>
+
+      <article class="panel">
+        <h2>Current Mission</h2>
+        <div id="currentMission" class="current-mission">No mission started yet.</div>
+      </article>
+    </section>
+
+    <section id="missions" class="view">
+      <article class="panel">
+        <div class="panel-heading">
+          <h2>Mission List</h2>
+          <button id="addMissionBtn" class="button small">Add Mission</button>
+        </div>
+        <div id="missionList" class="mission-list"></div>
+      </article>
+    </section>
+
+    <section id="notes" class="view">
+      <article class="panel">
+        <div class="panel-heading">
+          <h2>Mission Notes</h2>
+          <button id="dictateBtn" class="button secondary small">🎙 Dictate</button>
+        </div>
+        <textarea id="notesArea" rows="14" placeholder="Type or dictate notes here..."></textarea>
+        <p id="dictationStatus" class="muted"></p>
+      </article>
+    </section>
+
+    <section id="settings" class="view">
+      <article class="panel">
+        <h2>Backup & Restore</h2>
+        <p>Export your missions, progress, and notes as a JSON backup.</p>
+        <div class="stack">
+          <button id="exportBtn" class="button">Export Backup</button>
+          <label class="button secondary file-label">
+            Restore Backup
+            <input id="restoreInput" type="file" accept="application/json">
+          </label>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2>App Information</h2>
+        <dl class="info-list">
+          <div><dt>Product</dt><dd>Bullis Mission Control</dd></div>
+          <div><dt>Version</dt><dd>1.3</dd></div>
+          <div><dt>Storage</dt><dd>Local browser storage</dd></div>
+          <div><dt>Offline</dt><dd>Enabled</dd></div>
+        </dl>
+      </article>
+    </section>
+  </main>
+
+  <dialog id="missionDialog">
+    <form method="dialog" id="missionForm">
+      <h2>Add Mission</h2>
+      <label>Mission name<input id="missionName" maxlength="80" required></label>
+      <label>Minutes<input id="missionMinutes" type="number" min="1" max="240" value="25" required></label>
+      <div class="dialog-actions">
+        <button value="cancel" class="button secondary">Cancel</button>
+        <button id="saveMissionBtn" value="default" class="button">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <footer>Bullis AI Solutions • Bullis Mission Control v1.3</footer>
+  <script src="app.js"></script>
+</body>
+</html>
