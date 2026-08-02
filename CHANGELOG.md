@@ -1,8 +1,6 @@
 # Changelog
 
 ## 2.0.0-foundation
-- New modular life-management navigation
-- Dashboard and mission tracking
-- Rachel local mission advisor
-- Calendar, prayer, notes, and people modules
-- Backup/restore and offline PWA support
+- Started BMC 2.0 development
+- Added modular life-management sections
+- Added offline PWA support

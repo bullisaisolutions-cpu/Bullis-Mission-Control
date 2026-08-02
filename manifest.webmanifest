@@ -1,1 +1,23 @@
-{"name":"Bullis Mission Control 2.0","short_name":"BMC 2.0","start_url":"./","scope":"./","display":"standalone","background_color":"#f6f2e7","theme_color":"#184d3b","icons":[{"src":"assets/icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},{"src":"assets/icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
+{
+  "name": "Bullis Mission Control 2.0",
+  "short_name": "BMC 2.0",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f2e7",
+  "theme_color": "#184d3b",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
