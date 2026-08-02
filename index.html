@@ -1,124 +1,29 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#184d3b">
-  <meta name="description" content="Bullis Mission Control v1.3 — personal mission dashboard and offline PWA.">
-  <title>Bullis Mission Control v1.3</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icons/icon-192.png">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#184d3b"><title>Bullis Mission Control 2.0</title>
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/icons/icon-192.png">
+<style>
+:root{--g:#184d3b;--g2:#236b52;--y:#f2c94c;--b:#2f5f9d;--p:#6a4d92;--c:#f6f2e7;--w:#fff;--i:#15201b;--m:#6a756f;--l:#d8dfdb;--d:#a33838;--s:0 12px 32px rgba(25,55,43,.12)}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--c);color:var(--i)}button,input,textarea,select{font:inherit}.shell{min-height:100vh;display:grid;grid-template-columns:250px 1fr}.side{position:sticky;top:0;height:100vh;background:linear-gradient(180deg,#123d30,#1d5b46);color:#fff;padding:1rem;display:flex;flex-direction:column}.brand{display:flex;gap:.75rem;align-items:center;margin-bottom:1rem}.brand img{width:48px;border-radius:14px}.brand small{display:block;letter-spacing:.12em}.nav{display:grid;gap:.35rem}.nav button{border:0;background:transparent;color:#e7f1ed;padding:.8rem;border-radius:12px;text-align:left;font-weight:750}.nav button.active,.nav button:hover{background:rgba(255,255,255,.14)}.side footer{margin-top:auto;color:#dbe8e2}.top{position:sticky;top:0;z-index:5;padding:1rem 1.25rem;background:rgba(246,242,231,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--l);display:flex;justify-content:space-between;align-items:center}.top h1{margin:.1rem 0}.ey{font-size:.7rem;letter-spacing:.15em;font-weight:850;color:var(--g);margin:0}.main{padding:1.2rem;max-width:1300px;margin:auto}.grid{display:grid;gap:1rem}.c2{grid-template-columns:repeat(2,minmax(0,1fr))}.c3{grid-template-columns:repeat(3,minmax(0,1fr))}.c4{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:#fff;border:1px solid var(--l);border-radius:18px;padding:1.1rem;box-shadow:var(--s)}.hero{background:linear-gradient(135deg,#fff,#e7f1ec);border-left:6px solid var(--y)}.btn{border:0;border-radius:12px;background:var(--g);color:#fff;font-weight:800;padding:.75rem 1rem;cursor:pointer}.btn.alt{background:#e6ece8;color:var(--g);border:1px solid #cbd6d0}.btn.danger{background:var(--d)}.btn.small{padding:.45rem .65rem}.toolbar{display:flex;justify-content:space-between;gap:.7rem;align-items:center;flex-wrap:wrap}.stat{text-align:center}.stat strong{display:block;font-size:2rem;color:var(--g)}.meta{color:var(--m);font-size:.85rem}.list{display:grid;gap:.7rem}.row{display:grid;grid-template-columns:auto 1fr auto;gap:.75rem;align-items:center;padding:.8rem;border:1px solid var(--l);border-radius:14px}.row.done .title{text-decoration:line-through;color:var(--m)}.title{font-weight:800}.progress{height:14px;background:#e6ebe8;border-radius:99px;overflow:hidden}.bar{height:100%;background:linear-gradient(90deg,var(--g),var(--y))}.chat{display:grid;gap:.7rem;max-height:420px;overflow:auto;padding:.5rem}.msg{max-width:78%;padding:.8rem 1rem;border-radius:16px}.msg.user{justify-self:end;background:var(--b);color:#fff}.msg.rachel{justify-self:start;background:#e7f1ec;border:1px solid #cbd8d1}textarea,input,select{width:100%;padding:.8rem;border:1px solid #bdc9c3;border-radius:12px;background:#fff}.stack{display:grid;gap:.8rem}.empty{text-align:center;color:var(--m);padding:2rem}.hidden{display:none!important}@media(max-width:850px){.shell{grid-template-columns:1fr}.side{position:static;height:auto}.nav{grid-template-columns:repeat(4,1fr)}.nav button{text-align:center}.c4,.c3{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.nav{grid-template-columns:repeat(2,1fr)}.c4,.c3,.c2{grid-template-columns:1fr}.top{align-items:flex-start}.row{grid-template-columns:auto 1fr}.actions{grid-column:2}}
+</style>
 </head>
 <body>
-  <header class="app-header">
-    <div>
-      <p class="eyebrow">BULLIS AI SOLUTIONS</p>
-      <h1>Bullis Mission Control</h1>
-      <p class="version">Release 1.3</p>
-    </div>
-    <button id="installBtn" class="button secondary hidden">Install App</button>
-  </header>
-
-  <nav class="tabs" aria-label="Main navigation">
-    <button class="tab active" data-view="dashboard">Dashboard</button>
-    <button class="tab" data-view="missions">Missions</button>
-    <button class="tab" data-view="notes">Notes</button>
-    <button class="tab" data-view="settings">Backup</button>
-  </nav>
-
-  <main>
-    <section id="dashboard" class="view active">
-      <article class="hero-card">
-        <p class="eyebrow">MISSION ADVISOR</p>
-        <h2>Rachel</h2>
-        <p id="advisorMessage">One mission at a time. Progress beats perfection.</p>
-        <div class="hero-actions">
-          <button id="startNextBtn" class="button">Start Next Mission</button>
-          <button id="resetDayBtn" class="button secondary">Reset Day</button>
-        </div>
-      </article>
-
-      <div class="stats-grid">
-        <article class="stat-card"><span id="completeCount">0</span><small>Complete</small></article>
-        <article class="stat-card"><span id="remainingCount">0</span><small>Remaining</small></article>
-        <article class="stat-card"><span id="progressPercent">0%</span><small>Progress</small></article>
-      </div>
-
-      <article class="panel">
-        <div class="panel-heading">
-          <h2>Today’s Progress</h2>
-          <span id="progressText">0 of 0</span>
-        </div>
-        <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
-      </article>
-
-      <article class="panel">
-        <h2>Current Mission</h2>
-        <div id="currentMission" class="current-mission">No mission started yet.</div>
-      </article>
-    </section>
-
-    <section id="missions" class="view">
-      <article class="panel">
-        <div class="panel-heading">
-          <h2>Mission List</h2>
-          <button id="addMissionBtn" class="button small">Add Mission</button>
-        </div>
-        <div id="missionList" class="mission-list"></div>
-      </article>
-    </section>
-
-    <section id="notes" class="view">
-      <article class="panel">
-        <div class="panel-heading">
-          <h2>Mission Notes</h2>
-          <button id="dictateBtn" class="button secondary small">🎙 Dictate</button>
-        </div>
-        <textarea id="notesArea" rows="14" placeholder="Type or dictate notes here..."></textarea>
-        <p id="dictationStatus" class="muted"></p>
-      </article>
-    </section>
-
-    <section id="settings" class="view">
-      <article class="panel">
-        <h2>Backup & Restore</h2>
-        <p>Export your missions, progress, and notes as a JSON backup.</p>
-        <div class="stack">
-          <button id="exportBtn" class="button">Export Backup</button>
-          <label class="button secondary file-label">
-            Restore Backup
-            <input id="restoreInput" type="file" accept="application/json">
-          </label>
-        </div>
-      </article>
-
-      <article class="panel">
-        <h2>App Information</h2>
-        <dl class="info-list">
-          <div><dt>Product</dt><dd>Bullis Mission Control</dd></div>
-          <div><dt>Version</dt><dd>1.3</dd></div>
-          <div><dt>Storage</dt><dd>Local browser storage</dd></div>
-          <div><dt>Offline</dt><dd>Enabled</dd></div>
-        </dl>
-      </article>
-    </section>
-  </main>
-
-  <dialog id="missionDialog">
-    <form method="dialog" id="missionForm">
-      <h2>Add Mission</h2>
-      <label>Mission name<input id="missionName" maxlength="80" required></label>
-      <label>Minutes<input id="missionMinutes" type="number" min="1" max="240" value="25" required></label>
-      <div class="dialog-actions">
-        <button value="cancel" class="button secondary">Cancel</button>
-        <button id="saveMissionBtn" value="default" class="button">Save</button>
-      </div>
-    </form>
-  </dialog>
-
-  <footer>Bullis AI Solutions • Bullis Mission Control v1.3</footer>
-  <script src="app.js"></script>
-</body>
-</html>
+<div class="shell"><aside class="side"><div class="brand"><img src="assets/icons/icon-192.png" alt=""><div><small>BULLIS AI SOLUTIONS</small><strong>BMC 2.0</strong></div></div><nav class="nav" id="nav"></nav><footer><small>Foundation Release</small></footer></aside><section><header class="top"><div><p class="ey">BULLIS MISSION CONTROL</p><h1 id="title">Dashboard</h1></div><button class="btn" id="quick">＋ Quick Add</button></header><main id="app" class="main"></main></section></div>
+<script>
+const KEY='bmc_2_0_state';const uid=()=>crypto.randomUUID();const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const initial={version:'2.0.0-foundation',missions:[{id:uid(),title:'Morning setup',details:'Meds, Bella, scripture, pack for the day',status:'todo'},{id:uid(),title:'Living room reset',details:'25-minute focused reset',status:'todo'},{id:uid(),title:'Kitchen reset',details:'Dishes, counters, trash',status:'todo'}],notes:[],prayers:[],people:[],events:[],rachel:[{id:uid(),role:'rachel',text:'BMC 2.0 is online. Pick one clear mission, and we’ll move it forward together.'}]};
+let state=(()=>{try{return JSON.parse(localStorage.getItem(KEY))||structuredClone(initial)}catch{return structuredClone(initial)}})();let view='dashboard';
+const navs=[['dashboard','🏠 Dashboard'],['missions','🎯 Missions'],['rachel','🧠 Rachel'],['calendar','📅 Calendar'],['prayer','🙏 Prayer'],['notes','📝 Notes'],['people','👥 People'],['settings','⚙️ Settings']];
+function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}function go(v){view=v;render()}function itemPrompt(kind,date=false){const title=prompt(kind+' title:');if(!title)return;const details=prompt('Details:')||'';const x={id:uid(),title,details};if(date)x.date=prompt('Date (YYYY-MM-DD):',new Date().toISOString().slice(0,10))||new Date().toISOString().slice(0,10);return x}
+function dashboard(){const done=state.missions.filter(m=>m.status==='done').length,total=state.missions.length,pct=total?Math.round(done/total*100):0,next=state.missions.find(m=>m.status==='active')||state.missions.find(m=>m.status!=='done');return `<section class="grid c2"><article class="card hero"><p class="ey">MISSION ADVISOR</p><h2>Rachel</h2><p>${next?`Your next move is <strong>${esc(next.title)}</strong>. Keep it small and finishable.`:'Everything currently listed is complete.'}</p><button class="btn" onclick="startNext()">Start Next Mission</button> <button class="btn alt" onclick="go('rachel')">Talk to Rachel</button></article><article class="card"><h2>Current Mission</h2>${next?`<div class="title">${esc(next.title)}</div><p class="meta">${esc(next.details)}</p>`:'<div class="empty">No open mission.</div>'}</article></section><section class="grid c4" style="margin-top:1rem"><article class="card stat"><strong>${done}</strong><span>Complete</span></article><article class="card stat"><strong>${total-done}</strong><span>Remaining</span></article><article class="card stat"><strong>${pct}%</strong><span>Progress</span></article><article class="card stat"><strong>${state.prayers.length}</strong><span>Prayer entries</span></article></section><section class="card" style="margin-top:1rem"><div class="toolbar"><h2>Mission Progress</h2><span>${done} of ${total}</span></div><div class="progress"><div class="bar" style="width:${pct}%"></div></div></section>`}
+function missions(){return `<section class="card"><div class="toolbar"><div><p class="ey">MISSION CENTER</p><h2>Plan and execute</h2></div><button class="btn" onclick="addMission()">＋ New Mission</button></div><div class="list">${state.missions.map(m=>`<div class="row ${m.status==='done'?'done':''}"><input type="checkbox" ${m.status==='done'?'checked':''} onchange="toggleMission('${m.id}',this.checked)"><div><div class="title">${esc(m.title)}</div><div class="meta">${esc(m.details)} ${m.status==='active'?'• Active':''}</div></div><div class="actions"><button class="btn alt small" onclick="activate('${m.id}')">Start</button> <button class="btn danger small" onclick="del('missions','${m.id}')">Delete</button></div></div>`).join('')||'<div class="empty">No missions yet.</div>'}</div></section>`}
+function rachel(){return `<section class="grid c2"><article class="card"><p class="ey">AI MISSION ADVISOR</p><h2>Rachel</h2><div class="chat" id="chat">${state.rachel.map(m=>`<div class="msg ${m.role}">${esc(m.text)}</div>`).join('')}</div><div class="stack"><textarea id="rinput" rows="3" placeholder="Tell Rachel what you need help with..."></textarea><button class="btn" onclick="sendRachel()">Send</button></div></article><article class="card"><h2>Quick Guidance</h2><div class="stack"><button class="btn alt" onclick="ask('Help me choose my next mission.')">Choose next mission</button><button class="btn alt" onclick="ask('Help me reset after getting distracted.')">Reset after distraction</button><button class="btn alt" onclick="ask('Give me a short encouragement.')">Encouragement</button><button class="btn alt" onclick="ask('Help me break a large task into steps.')">Break down a task</button></div></article></section>`}
+function generic(type,label,icon,date=false){const arr=state[type];return `<section class="card"><div class="toolbar"><div><p class="ey">${label.toUpperCase()}</p><h2>${label}</h2></div><button class="btn" onclick="addGeneric('${type}',${date})">＋ Add</button></div><div class="list">${arr.map(x=>`<div class="row"><span>${icon}</span><div><div class="title">${esc(x.title)}</div><div class="meta">${date&&x.date?esc(x.date)+' • ':''}${esc(x.details)}</div></div><button class="btn danger small" onclick="del('${type}','${x.id}')">Delete</button></div>`).join('')||'<div class="empty">Nothing added yet.</div>'}</div></section>`}
+function settings(){return `<section class="grid c2"><article class="card"><p class="ey">DATA</p><h2>Backup</h2><div class="stack"><button class="btn" onclick="backup()">Export Backup</button><label class="btn alt">Restore Backup<input type="file" accept="application/json" hidden onchange="restore(this)"></label></div></article><article class="card"><p class="ey">SYSTEM</p><h2>Application</h2><p><strong>Version:</strong> ${esc(state.version)}</p><p><strong>Storage:</strong> Local browser</p><p><strong>Offline:</strong> Enabled</p><button class="btn danger" onclick="resetApp()">Reset local data</button></article></section>`}
+function render(){document.getElementById('nav').innerHTML=navs.map(([k,l])=>`<button class="${view===k?'active':''}" onclick="go('${k}')">${l}</button>`).join('');document.getElementById('title').textContent=navs.find(x=>x[0]===view)[1].replace(/^.. /,'');const map={dashboard:dashboard,missions:missions,rachel:rachel,calendar:()=>generic('events','Calendar','📅',true),prayer:()=>generic('prayers','Prayer Journal','🙏'),notes:()=>generic('notes','Notes','📝'),people:()=>generic('people','People','👤'),settings};document.getElementById('app').innerHTML=map[view]();setTimeout(()=>{const c=document.getElementById('chat');if(c)c.scrollTop=c.scrollHeight},0)}
+window.go=go;window.startNext=()=>{state.missions.forEach(m=>{if(m.status==='active')m.status='todo'});const n=state.missions.find(m=>m.status!=='done');if(n)n.status='active';save()};window.toggleMission=(id,v)=>{const m=state.missions.find(x=>x.id===id);if(m)m.status=v?'done':'todo';save()};window.activate=id=>{state.missions.forEach(m=>{if(m.status==='active')m.status='todo'});const m=state.missions.find(x=>x.id===id);if(m)m.status='active';save()};window.del=(type,id)=>{state[type]=state[type].filter(x=>x.id!==id);save()};window.addMission=()=>{const x=itemPrompt('Mission');if(x){state.missions.push({...x,status:'todo'});save()}};window.addGeneric=(type,date)=>{const x=itemPrompt(type.slice(0,-1),date);if(x){state[type].push(x);save()}};
+function reply(t){const l=t.toLowerCase(),open=state.missions.filter(m=>m.status!=='done');if(l.includes('next mission')||l.includes('choose'))return open[0]?`Start with “${open[0].title}.” Give it 15 focused minutes.`:'Add one clear mission and we’ll start there.';if(l.includes('distract')||l.includes('reset'))return 'Pause, breathe, close the extra tabs, and restart with a five-minute entry step.';if(l.includes('encour'))return 'You do not need to finish the whole mountain tonight. Move one solid stone.';if(l.includes('break'))return 'Define the finish line, choose the first visible action, work 15 minutes, then reassess.';return 'Turn that into one specific action you can complete next. Add it as a mission, then start it.'}
+window.ask=t=>{document.getElementById('rinput').value=t;sendRachel()};window.sendRachel=()=>{const el=document.getElementById('rinput'),t=el.value.trim();if(!t)return;state.rachel.push({id:uid(),role:'user',text:t},{id:uid(),role:'rachel',text:reply(t)});save()};window.backup=()=>{const b=new Blob([JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='BMC_2_0_Backup.json';a.click();URL.revokeObjectURL(a.href)};window.restore=async el=>{try{const d=JSON.parse(await el.files[0].text());if(!d.version)throw 0;state=d;save();alert('Backup restored.')}catch{alert('Invalid backup file.')}};window.resetApp=()=>{if(confirm('Reset all BMC 2.0 local data?')){state=structuredClone(initial);save()}};document.getElementById('quick').onclick=()=>{const kind=prompt('Add mission, note, prayer, person, or event:','mission')?.toLowerCase();if(!kind)return;if(kind==='mission')addMission();else{const map={note:'notes',prayer:'prayers',person:'people',event:'events'};if(map[kind])addGeneric(map[kind],kind==='event')}};if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js'));render();
+</script>
+</body></html>
