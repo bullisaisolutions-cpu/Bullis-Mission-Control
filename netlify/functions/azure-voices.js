@@ -102,18 +102,18 @@ exports.handler = async function (event) {
     return jsonResponse({ error: 'This endpoint accepts GET requests only.' }, 405);
   }
 
-  const region = (process.env.AZURE_SPEECH_REGION || 'eastus')
+  const region = (process.env.AZURE_SPEECH_REGION || '')
     .trim()
     .replace(/^Value:\s*/i, '');
   const key = (process.env.AZURE_SPEECH_KEY || '').trim();
   const cacheKey = `azure-voices:${region}`;
   const currentCache = globalThis.__bmcVoiceCache || {};
 
-  if (!key) {
+  if (!key || !region) {
     return jsonResponse({
       error: 'Azure Speech configuration is incomplete.',
       region,
-      keyPresent: false,
+      keyPresent: !!key,
     }, 500);
   }
 
