@@ -98,7 +98,18 @@ exports.handler = async function (event) {
     return jsonResponse({ error: 'This endpoint accepts POST requests only.' }, 405);
   }
 
-  const region = (process.env.AZURE_SPEECH_REGION || 'eastus').trim() || 'eastus';
+  const region = (process.env.AZURE_SPEECH_REGION || '')
+    .trim()
+    .replace(/^Value:\s*/i, '');
+  const apiKey = (process.env.AZURE_SPEECH_KEY || '').trim();
+
+  if (!region || !apiKey) {
+    return jsonResponse({
+      error: 'Azure Speech configuration is incomplete.',
+      region,
+      keyPresent: !!apiKey,
+    }, 500);
+  }
 
   try {
     const rawBody = event.body ? JSON.parse(event.body) : {};
@@ -136,7 +147,6 @@ exports.handler = async function (event) {
       '</speak>',
     ].join('');
 
-    const apiKey = process.env.AZURE_SPEECH_KEY;
     const response = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
       method: 'POST',
       headers: {

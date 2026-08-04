@@ -17,7 +17,7 @@ Create the following environment variables in your Netlify site configuration:
 - AZURE_SPEECH_KEY
 - AZURE_SPEECH_REGION
 
-Use `eastus` as the default region when `AZURE_SPEECH_REGION` is missing. The key is never stored in frontend JavaScript, HTML, CSS, Git history, logs, screenshots, or documentation examples.
+Set `AZURE_SPEECH_REGION` to `your-azure-region` in your environment configuration. The key is never stored in frontend JavaScript, HTML, CSS, Git history, logs, screenshots, or documentation examples.
 
 A local example file is included at `.env.example` with placeholder values only.
 
