@@ -2,3 +2,10 @@
   for = "/service-worker.js"
   [headers.values]
     Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, Ocp-Apim-Subscription-Key"
