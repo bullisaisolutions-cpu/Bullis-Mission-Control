@@ -42,24 +42,31 @@ function normalizeVoice(item = {}) {
   };
 }
 
-async function getVoiceCatalog(region) {
-  const apiKey = process.env.AZURE_SPEECH_KEY;
-  if (!apiKey) {
+async function getVoiceCatalog(region, key) {
+  if (!key) {
     throw new Error('AZURE_SPEECH_KEY is not configured.');
   }
 
   const response = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/voices/list`, {
     headers: {
-      'Ocp-Apim-Subscription-Key': apiKey,
+      'Ocp-Apim-Subscription-Key': key,
       'Accept': 'application/json',
       'User-Agent': 'BMC/2.1.1',
     },
   });
 
   if (!response.ok) {
-    const text = await response.text().catch(() => '');
-    const sanitizedText = text ? text.slice(0, 160) : '';
-    throw new Error(`Azure voice catalog request failed (${response.status}). ${sanitizedText}`.trim());
+    return {
+      __diagnostic: {
+        error: 'Azure rejected the voice catalog request.',
+        upstreamStatus: response.status,
+        upstreamStatusText: response.statusText,
+        azureErrorCode: response.headers.get('x-ms-error-code') || null,
+        region,
+        keyPresent: true,
+        keyLength: key.length,
+      },
+    };
   }
 
   const data = await response.json().catch(() => []);
@@ -95,9 +102,20 @@ exports.handler = async function (event) {
     return jsonResponse({ error: 'This endpoint accepts GET requests only.' }, 405);
   }
 
-  const region = (process.env.AZURE_SPEECH_REGION || 'eastus').trim() || 'eastus';
+  const region = (process.env.AZURE_SPEECH_REGION || 'eastus')
+    .trim()
+    .replace(/^Value:\s*/i, '');
+  const key = (process.env.AZURE_SPEECH_KEY || '').trim();
   const cacheKey = `azure-voices:${region}`;
   const currentCache = globalThis.__bmcVoiceCache || {};
+
+  if (!key) {
+    return jsonResponse({
+      error: 'Azure Speech configuration is incomplete.',
+      region,
+      keyPresent: false,
+    }, 500);
+  }
 
   if (currentCache[cacheKey] && currentCache[cacheKey].expiresAt > Date.now()) {
     return jsonResponse(currentCache[cacheKey].data, 200, {
@@ -106,25 +124,28 @@ exports.handler = async function (event) {
   }
 
   try {
-    const voices = await getVoiceCatalog(region);
+    const catalog = await getVoiceCatalog(region, key);
+
+    if (catalog && catalog.__diagnostic) {
+      return jsonResponse(catalog.__diagnostic, 502);
+    }
+
     globalThis.__bmcVoiceCache = globalThis.__bmcVoiceCache || {};
     globalThis.__bmcVoiceCache[cacheKey] = {
-      data: voices,
+      data: catalog,
       expiresAt: Date.now() + CACHE_TTL_MS,
     };
 
-    return jsonResponse(voices, 200, {
+    return jsonResponse(catalog, 200, {
       'Cache-Control': 'public, max-age=21600',
     });
   } catch (error) {
-    const message = error && error.message ? error.message : 'Azure voice catalog is temporarily unavailable.';
-    const safeMessage = message.includes('AZURE_SPEECH_KEY')
-      ? 'Voice service credentials are not configured on Netlify.'
-      : 'The Azure English voice catalog could not be loaded right now.';
-
     return jsonResponse({
-      error: safeMessage,
-      message: safeMessage,
+      error: 'Azure could not be reached.',
+      cause: error.message,
+      region,
+      keyPresent: true,
+      keyLength: key.length,
     }, 502);
   }
 };
