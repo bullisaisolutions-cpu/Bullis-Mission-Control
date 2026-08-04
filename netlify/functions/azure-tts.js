@@ -1,6 +1,6 @@
 function jsonResponse(body, status = 200, extraHeaders = {}) {
-  return new Response(JSON.stringify(body), {
-    status,
+  return {
+    statusCode: status,
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
@@ -10,7 +10,25 @@ function jsonResponse(body, status = 200, extraHeaders = {}) {
       'X-Content-Type-Options': 'nosniff',
       ...extraHeaders,
     },
-  });
+    body: JSON.stringify(body),
+  };
+}
+
+function audioResponse(audioBuffer, status = 200, extraHeaders = {}) {
+  return {
+    statusCode: status,
+    headers: {
+      'Content-Type': 'audio/mpeg',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, Ocp-Apim-Subscription-Key',
+      'X-Content-Type-Options': 'nosniff',
+      ...extraHeaders,
+    },
+    isBase64Encoded: true,
+    body: Buffer.from(audioBuffer).toString('base64'),
+  };
 }
 
 function escapeXml(value = '') {
@@ -18,7 +36,7 @@ function escapeXml(value = '') {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/\"/g, '&quot;')
+    .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
 }
 
@@ -52,7 +70,8 @@ async function getVoiceCatalog(region) {
 
   if (!response.ok) {
     const errorText = await response.text().catch(() => '');
-    throw new Error(`Azure voice catalog could not be loaded (${response.status}). ${errorText ? errorText.slice(0, 160) : ''}`.trim());
+    const sanitizedText = errorText ? errorText.slice(0, 160) : '';
+    throw new Error(`Azure voice catalog could not be loaded (${response.status}). ${sanitizedText}`.trim());
   }
 
   const data = await response.json().catch(() => []);
@@ -66,13 +85,17 @@ async function getVoiceCatalog(region) {
     .filter(Boolean);
 }
 
-export async function handler(event) {
-  if (event.httpMethod && event.httpMethod !== 'POST') {
+exports.handler = async function (event) {
+  if (event && event.httpMethod === 'OPTIONS') {
+    return jsonResponse({ ok: true }, 200);
+  }
+
+  if (!event || !event.httpMethod) {
     return jsonResponse({ error: 'This endpoint accepts POST requests only.' }, 405);
   }
 
-  if (event.httpMethod === 'OPTIONS') {
-    return jsonResponse({ ok: true }, 200);
+  if (event.httpMethod !== 'POST') {
+    return jsonResponse({ error: 'This endpoint accepts POST requests only.' }, 405);
   }
 
   const region = (process.env.AZURE_SPEECH_REGION || 'eastus').trim() || 'eastus';
@@ -128,26 +151,21 @@ export async function handler(event) {
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => '');
-      throw new Error(`Azure TTS synthesis failed (${response.status}). ${errorText ? errorText.slice(0, 160) : ''}`.trim());
+      const sanitizedText = errorText ? errorText.slice(0, 160) : '';
+      throw new Error(`Azure TTS synthesis failed (${response.status}). ${sanitizedText}`.trim());
     }
 
     const audioBuffer = Buffer.from(await response.arrayBuffer());
-    return new Response(audioBuffer, {
-      status: 200,
-      headers: {
-        'Content-Type': 'audio/mpeg',
-        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization, Ocp-Apim-Subscription-Key',
-        'X-Content-Type-Options': 'nosniff',
-      },
-    });
+    return audioResponse(audioBuffer, 200);
   } catch (error) {
-    const message = error?.message || 'Azure speech synthesis is temporarily unavailable.';
+    const message = error && error.message ? error.message : 'Azure speech synthesis is temporarily unavailable.';
+    const safeMessage = message.includes('AZURE_SPEECH_KEY')
+      ? 'The Azure Speech key is not configured on Netlify.'
+      : 'Azure speech synthesis failed. Please try again or use the browser voice fallback.';
+
     return jsonResponse({
-      error: 'Azure speech synthesis failed. Please try again or use the browser voice fallback.',
-      message: message.includes('AZURE_SPEECH_KEY') ? 'The Azure Speech key is not configured on Netlify.' : message,
+      error: safeMessage,
+      message: safeMessage,
     }, 502);
   }
-}
+};

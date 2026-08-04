@@ -1,8 +1,8 @@
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
 function jsonResponse(body, status = 200, extraHeaders = {}) {
-  return new Response(JSON.stringify(body), {
-    status,
+  return {
+    statusCode: status,
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Cache-Control': 'public, max-age=21600',
@@ -12,7 +12,8 @@ function jsonResponse(body, status = 200, extraHeaders = {}) {
       'X-Content-Type-Options': 'nosniff',
       ...extraHeaders,
     },
-  });
+    body: JSON.stringify(body),
+  };
 }
 
 function normalizeVoice(item = {}) {
@@ -57,7 +58,8 @@ async function getVoiceCatalog(region) {
 
   if (!response.ok) {
     const text = await response.text().catch(() => '');
-    throw new Error(`Azure voice catalog request failed (${response.status}). ${text ? text.slice(0, 160) : ''}`.trim());
+    const sanitizedText = text ? text.slice(0, 160) : '';
+    throw new Error(`Azure voice catalog request failed (${response.status}). ${sanitizedText}`.trim());
   }
 
   const data = await response.json().catch(() => []);
@@ -80,13 +82,17 @@ async function getVoiceCatalog(region) {
   return englishNeural;
 }
 
-export async function handler(event) {
-  if (event.httpMethod && event.httpMethod !== 'GET') {
+exports.handler = async function (event) {
+  if (event && event.httpMethod === 'OPTIONS') {
+    return jsonResponse({ ok: true }, 200);
+  }
+
+  if (!event || !event.httpMethod) {
     return jsonResponse({ error: 'This endpoint accepts GET requests only.' }, 405);
   }
 
-  if (event.httpMethod === 'OPTIONS') {
-    return jsonResponse({ ok: true }, 200);
+  if (event.httpMethod !== 'GET') {
+    return jsonResponse({ error: 'This endpoint accepts GET requests only.' }, 405);
   }
 
   const region = (process.env.AZURE_SPEECH_REGION || 'eastus').trim() || 'eastus';
@@ -111,10 +117,14 @@ export async function handler(event) {
       'Cache-Control': 'public, max-age=21600',
     });
   } catch (error) {
-    const message = error?.message || 'Azure voice catalog is temporarily unavailable.';
+    const message = error && error.message ? error.message : 'Azure voice catalog is temporarily unavailable.';
+    const safeMessage = message.includes('AZURE_SPEECH_KEY')
+      ? 'Voice service credentials are not configured on Netlify.'
+      : 'The Azure English voice catalog could not be loaded right now.';
+
     return jsonResponse({
-      error: 'The Azure English voice catalog could not be loaded right now.',
-      message: message.includes('AZURE_SPEECH_KEY') ? 'Voice service credentials are not configured on Netlify.' : message,
+      error: safeMessage,
+      message: safeMessage,
     }, 502);
   }
-}
+};
